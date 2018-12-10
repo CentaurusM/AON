@@ -10,7 +10,7 @@ flags.DEFINE_integer('batch_size', 32, 'define train batch size')
 flags.DEFINE_integer('max_steps', 2000000, 'step nums for training')
 flags.DEFINE_boolean('restore', True, 'restore model parameter from checkpoint file')
 flags.DEFINE_string('tfrecord_file_path', '/share/zhui/mnt/train.tfrecord', 'tfrecord file path')
-flags.DEFINE_boolean('single_seq', False, 'Use FG or not')
+flags.DEFINE_boolean('single_seq', True, 'Use FG or not')
 FLAGS = flags.FLAGS
 
 
