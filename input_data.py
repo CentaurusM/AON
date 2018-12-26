@@ -5,6 +5,47 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
 
+def read_and_decode(filename_queue):
+    reader = tf.TFRecordReader()
+    _, example_tensor = reader.read(filename_queue)
+    # %%1: Use tf.parse_single_example to parse example tensor
+    example_features = tf.parse_single_example(
+        example_tensor,
+        features={
+            'image/transcript': tf.FixedLenFeature([], dtype=tf.string),
+            'image/height': tf.FixedLenFeature([], dtype=tf.int64),
+            'image/width': tf.FixedLenFeature([], dtype=tf.int64),
+            'image/encoded': tf.FixedLenFeature([], dtype=tf.string),
+            'image/filename': tf.FixedLenFeature([], dtype=tf.string)
+        }
+    )
+    height = tf.cast(example_features['image/height'], tf.int32)
+    width = tf.cast(example_features['image/width'], tf.int32)
+
+    image = tf.image.decode_jpeg(example_features['image/encoded'], channels=3)
+    image = tf.reshape(image, [height, width, 3])
+    image = tf.image.resize_images(image, [100, 100]) / 128.0 - 1  # normalize to [-1, 1)
+
+    groundtruth_text = tf.cast(example_features['image/transcript'], tf.string)
+    filename = tf.cast(example_features['image/filename'], tf.string)
+    return image,groundtruth_text
+def get_inputdata(filename,num_epochs=20, batch_size=32):
+    if not num_epochs: num_epochs = None
+    with tf.name_scope('input'):
+        filename_queue = tf.train.string_input_producer([filename])
+        image, groundtruth_text = read_and_decode(filename_queue)
+
+        min_after_dequeue = 2000
+        capacity = min_after_dequeue + 3 * batch_size
+        image_batch, groundtruth_text_batch = tf.train.shuffle_batch(
+            [image, groundtruth_text],
+            batch_size=batch_size,
+            min_after_dequeue=min_after_dequeue,
+            capacity=capacity,
+            num_threads=8
+        )
+        return image_batch, groundtruth_text_batch
+    
 
 def read_tfrecord_use_pythonAPI(filename):
     example_iter = tf.python_io.tf_record_iterator(path=filename)  # yield string generator
