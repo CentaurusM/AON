@@ -169,20 +169,20 @@ def _arbitrary_orientation_network(inputs):
     with tf.name_scope('AON_core') as scope:
         feature_horizontal = get_feature_sequence(inputs=inputs)
         feature_seq_1, _= _bilstm(layer_name='bilstm_1', inputs=feature_horizontal, hidden_units=256)
-        feature_seq_1_reverse = tf.reverse(feature_seq_1, axis=[1])
+        #feature_seq_1_reverse = tf.reverse(feature_seq_1, axis=[1])
 
-        featute_vertical = get_feature_sequence(inputs=tf.image.rot90(inputs), reuse=True)
-        feature_seq_2, _= _bilstm(layer_name='bilstm_2', inputs=featute_vertical, hidden_units=256)
-        feature_seq_2_reverse = tf.reverse(feature_seq_2, axis=[1])
+        #featute_vertical = get_feature_sequence(inputs=tf.image.rot90(inputs), reuse=True)
+        #feature_seq_2, _= _bilstm(layer_name='bilstm_2', inputs=featute_vertical, hidden_units=256)
+        #feature_seq_2_reverse = tf.reverse(feature_seq_2, axis=[1])
 
-        character_placement_cluse = get_character_placement_cluse(inputs=inputs)
+        #character_placement_cluse = get_character_placement_cluse(inputs=inputs)
         
         res_dict = {
             'feature_seq_1': feature_seq_1,
-            'feature_seq_1_reverse': feature_seq_1_reverse,
-            'feature_seq_2': feature_seq_2,
-            'feature_seq_2_reverse': feature_seq_2_reverse,
-            'character_placement_cluse': character_placement_cluse,
+            #'feature_seq_1_reverse': feature_seq_1_reverse,
+            #'feature_seq_2': feature_seq_2,
+            #'feature_seq_2_reverse': feature_seq_2_reverse,
+            #'character_placement_cluse': character_placement_cluse,
         }
         return res_dict
 
@@ -192,22 +192,23 @@ def _filter_gate(aon_core_output_dict, single_seq=False):
     """
     feature_seq_1 = aon_core_output_dict['feature_seq_1']
     # DEBUG
-    if single_seq:
+    #if single_seq:
+    if 1:
         return feature_seq_1
 
-    feature_seq_1_reverse = aon_core_output_dict['feature_seq_1_reverse']
-    feature_seq_2 = aon_core_output_dict['feature_seq_2']
-    feature_seq_2_reverse = aon_core_output_dict['feature_seq_2_reverse']
-    character_placement_cluse = aon_core_output_dict['character_placement_cluse']
+    #feature_seq_1_reverse = aon_core_output_dict['feature_seq_1_reverse']
+    #feature_seq_2 = aon_core_output_dict['feature_seq_2']
+    #feature_seq_2_reverse = aon_core_output_dict['feature_seq_2_reverse']
+    #character_placement_cluse = aon_core_output_dict['character_placement_cluse']
 
-    with tf.name_scope('FG') as scope:
-        A = feature_seq_1 * tf.tile(tf.reshape(character_placement_cluse[:, :, 0], [-1, 23, 1]), [1, 1, 512])
-        B = feature_seq_1_reverse * tf.tile(tf.reshape(character_placement_cluse[:, :, 1], [-1, 23, 1]), [1, 1, 512])
-        C = feature_seq_2 * tf.tile(tf.reshape(character_placement_cluse[:, :, 2], [-1, 23, 1]), [1, 1, 512])
-        D = feature_seq_2_reverse * tf.tile(tf.reshape(character_placement_cluse[:, :, 3], [-1, 23, 1]), [1, 1, 512])
-        res = A + B + C + D
-        res = tf.tanh(res)
-        return res
+    #with tf.name_scope('FG') as scope:
+        #A = feature_seq_1 * tf.tile(tf.reshape(character_placement_cluse[:, :, 0], [-1, 23, 1]), [1, 1, 512])
+        #B = feature_seq_1_reverse * tf.tile(tf.reshape(character_placement_cluse[:, :, 1], [-1, 23, 1]), [1, 1, 512])
+        #C = feature_seq_2 * tf.tile(tf.reshape(character_placement_cluse[:, :, 2], [-1, 23, 1]), [1, 1, 512])
+        #D = feature_seq_2_reverse * tf.tile(tf.reshape(character_placement_cluse[:, :, 3], [-1, 23, 1]), [1, 1, 512])
+        #res = A + B + C + D
+        #res = tf.tanh(res)
+        #return res
 
 
 
