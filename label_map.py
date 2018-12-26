@@ -8,7 +8,8 @@ class LabelMap(object):
                ignore_case=True,
                unk_label=None):
     if character_set is None:
-        character_set = list('abcdefghijklmnopqrstuvwxyz1234567890')
+        #character_set = list('abcdefghijklmnopqrstuvwxyz1234567890')
+        character_set = list('JOINTyourself15497280FmPABLCKSREYUpdgatinhWDvHVGwM!kc.(X$bQxZ-?@3 /j%,:#&6z\'+q^_";*~')
     if not isinstance(character_set, list):
       raise ValueError('character_set must be provided as a list')
     if len(frozenset(character_set)) != len(character_set):
